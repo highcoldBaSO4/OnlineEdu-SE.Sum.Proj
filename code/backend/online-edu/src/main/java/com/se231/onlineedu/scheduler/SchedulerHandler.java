@@ -5,7 +5,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import java.util.Date;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -18,7 +17,7 @@ public class SchedulerHandler {
     private static int courseTimes=0;
     private static int paperTimes=0;
 
-    public static void setCourseState(Long courseId, String state, Date triggerDate)throws SchedulerException {
+    public static void setCourseState(Long courseId, String state, Date triggerDate)throws Exception {
         //创建调度器
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
@@ -42,7 +41,7 @@ public class SchedulerHandler {
         scheduler.start();
     }
 
-    public static void setAnswerStateAndAutoMark(Date triggerDate,Long paperId)throws SchedulerException{
+    public static void setAnswerStateAndAutoMark(Date triggerDate,Long paperId)throws Exception{
         //创建调度器
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 

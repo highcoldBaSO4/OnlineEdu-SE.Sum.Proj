@@ -92,13 +92,13 @@ public class CourseServiceImpl implements CourseService {
                     try{
                         course.setState(CourseState.READY_TO_START);
                         SchedulerHandler.setCourseState(courseId,"TEACHING",course.getStartDate());
-                    }catch(SchedulerException e){
+                    }catch(Exception e){
                         e.printStackTrace();
                     }
                 }
                 try {
                     SchedulerHandler.setCourseState(courseId, "FINISHED", course.getEndDate());
-                } catch (SchedulerException e){
+                } catch (Exception e){
                     e.printStackTrace();
                 }
                 break;

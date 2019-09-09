@@ -57,8 +57,8 @@ public class CourseController {
     @PostMapping("/start")
     @PreAuthorize("hasAnyRole('TEACHING_ADMIN','ADMIN','SUPER_ADMIN')")
     public Course applyToStartCourse(@RequestParam("prototypeId") Long prototypeId,
-                                                     @Valid @RequestBody CourseApplicationForm form,
-                                                     @AuthenticationPrincipal UserPrinciple userPrinciple) {
+                                     @Valid @RequestBody CourseApplicationForm form,
+                                     @AuthenticationPrincipal UserPrinciple userPrinciple) {
         return courseService.applyToStartCourse(form,prototypeId,userPrinciple.getId());
     }
 

@@ -72,7 +72,7 @@ public class PaperServiceImpl implements PaperService {
         paper=paperRepository.save(paper);
         try{
             SchedulerHandler.setAnswerStateAndAutoMark(form.getEnd(),paper.getId());
-        }catch (SchedulerException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
         return paper;

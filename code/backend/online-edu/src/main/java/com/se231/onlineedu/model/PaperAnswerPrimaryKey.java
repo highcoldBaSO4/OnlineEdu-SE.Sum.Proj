@@ -23,12 +23,10 @@ public class PaperAnswerPrimaryKey implements Serializable {
     private static final Long serialVersionUID = 1L;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @NotFound(action= NotFoundAction.IGNORE)
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @NotFound(action=NotFoundAction.IGNORE)
     @JoinColumn(name = "paper_id")
     private Paper paper;
 

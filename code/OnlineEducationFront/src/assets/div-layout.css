@@ -1,0 +1,31 @@
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.float-clear {
+    clear: both
+}
+
+.center-layout {
+    margin-left: auto;
+    margin-right:auto;
+}
+
+.content-body-layout {
+    width: 1000px;
+    margin-left: 25px;
+    margin-top: 30px;
+}
+
+pre {
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word
+}

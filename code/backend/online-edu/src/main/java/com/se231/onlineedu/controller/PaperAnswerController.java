@@ -92,4 +92,9 @@ public class PaperAnswerController {
                                               @PathVariable("studentId")Long studentId){
         return paperAnswerService.getStudentAnswer(courseId,paperId,studentId);
     }
+
+    @GetMapping("/test")
+    public void  mark(@PathVariable("paperId")Long id){
+        paperAnswerService.autoMark(id);
+    }
 }

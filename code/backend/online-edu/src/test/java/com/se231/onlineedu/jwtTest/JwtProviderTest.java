@@ -1,6 +1,9 @@
 package com.se231.onlineedu.jwtTest;
 
 
+import com.se231.onlineedu.exception.BeforeStartException;
+import com.se231.onlineedu.exception.NotFoundException;
+import com.se231.onlineedu.exception.ValidationException;
 import com.se231.onlineedu.security.jwt.JwtProvider;
 import io.jsonwebtoken.Clock;
 import org.assertj.core.util.DateUtil;
@@ -21,7 +24,12 @@ import static org.mockito.Mockito.when;
  * @author liu
  */
 public class JwtProviderTest {
-    private static final String TEST_USERNAME = "testUser";
+    private static final int EXPIRE = 360000;
+    private static final int NEG_EXPIRE = -360000;
+    private static final String SECRET = "ydtucvykb";
+    private static final String SECRET_EMPTY = "";
+    private static final String USERNAME = "testUser";
+    private static final String USERNAME_EMPTY = "";
     private static final String ERROR_INFO = "abcd";
 
     @Mock
@@ -33,11 +41,33 @@ public class JwtProviderTest {
     @Before
     public void init(){
         MockitoAnnotations.initMocks(this);
-
-        ReflectionTestUtils.setField(jwtProvider, "jwtExpiration", 3600000); // an hour
-        ReflectionTestUtils.setField(jwtProvider, "jwtSecret","mySecret");
-
     }
+
+
+    @Test(expected = NotFoundException.class)
+    public void usernameNull(){
+        when(clockMocker.now()).thenReturn(DateUtil.now());
+        getToken(EXPIRE, SECRET, USERNAME_EMPTY, true);
+    }
+
+    @Test(expected = BeforeStartException.class)
+    public void minusExpire(){
+        when(clockMocker.now()).thenReturn(DateUtil.now());
+        getToken(NEG_EXPIRE, SECRET, USERNAME, true);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void blankSecret(){
+        when(clockMocker.now()).thenReturn(DateUtil.now());
+        getToken(EXPIRE, SECRET_EMPTY, USERNAME, true);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void notActivated(){
+        when(clockMocker.now()).thenReturn(DateUtil.now());
+        getToken(EXPIRE, SECRET, USERNAME, false);
+    }
+
 
     @Test
     public void differentTimeShouldCreateDifferentTokens(){
@@ -55,9 +85,14 @@ public class JwtProviderTest {
 
         final String token = getToken();
 
-        assertThat(jwtProvider.getUserNameFromJwtToken(token)).isEqualTo(TEST_USERNAME);
+        assertThat(jwtProvider.getUserNameFromJwtToken(token)).isEqualTo(USERNAME);
     }
 
+
+    @Test(expected = ValidationException.class)
+    public void emptyToken(){
+        jwtProvider.getUserNameFromJwtToken("");
+    }
     @Test
     public void failCases(){
         when(clockMocker.now()).thenReturn(DateUtil.yesterday());
@@ -69,7 +104,17 @@ public class JwtProviderTest {
         assertFalse("empty token", jwtProvider.validateJwtToken(""));
     }
 
-    private String getToken() {
-        return jwtProvider.generateJwtToken(new UserDetailsDummy(TEST_USERNAME));
+    private String getToken(int jwtExpiration, String secret, String username, boolean isEnabled) {
+        ReflectionTestUtils.setField(jwtProvider, "jwtExpiration", jwtExpiration); // an hour
+        ReflectionTestUtils.setField(jwtProvider, "jwtSecret",secret);
+
+        return jwtProvider.generateJwtToken(new UserDetailsDummy(username, isEnabled));
+    }
+
+    private String getToken(){
+        ReflectionTestUtils.setField(jwtProvider, "jwtExpiration", EXPIRE); // an hour
+        ReflectionTestUtils.setField(jwtProvider, "jwtSecret",SECRET);
+
+        return jwtProvider.generateJwtToken(new UserDetailsDummy(USERNAME));
     }
 }

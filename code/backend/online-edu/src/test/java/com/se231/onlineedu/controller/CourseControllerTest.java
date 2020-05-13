@@ -177,13 +177,13 @@ public class CourseControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void applyToStartCourse() throws Exception {
-        mvc.perform(post("/api/courses/start").param("prototypeId", "1").header("Authorization", token).contentType(MediaType.APPLICATION_JSON)
-        .content("{\"courseTitle\":\"hah\",\"startDate\":\"2019-09-30 00:00:00\",\"endDate\":\"2019-10-18 00:00:00\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
-    }
+//    @Test
+//    public void applyToStartCourse() throws Exception {
+//        mvc.perform(post("/api/courses/start").param("prototypeId", "1").header("Authorization", token).contentType(MediaType.APPLICATION_JSON)
+//        .content("{\"courseTitle\":\"hah\",\"startDate\":\"2019-09-30 00:00:00\",\"endDate\":\"2019-10-18 00:00:00\"}"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id").value(1));
+//    }
 
     @Test
     public void examineStartCourse() throws Exception {

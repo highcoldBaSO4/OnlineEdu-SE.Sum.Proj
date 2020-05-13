@@ -7,10 +7,16 @@ import java.util.Collection;
 
 public class UserDetailsDummy implements UserDetails {
 
-    private final String username;
+    private String username;
+    private boolean enabled;
 
+    public UserDetailsDummy(String username, boolean enabled) {
+        this.username = username;
+        this.enabled = enabled;
+    }
     public UserDetailsDummy(String username) {
         this.username = username;
+        this.enabled = true;
     }
 
     @Override
@@ -45,6 +51,6 @@ public class UserDetailsDummy implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

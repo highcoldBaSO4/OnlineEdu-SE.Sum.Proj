@@ -1,10 +1,13 @@
 package com.se231.onlineedu.security.jwt;
 
+import com.se231.onlineedu.exception.BeforeStartException;
+import com.se231.onlineedu.exception.NotFoundException;
+import com.se231.onlineedu.exception.ValidationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
+import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,19 @@ public class JwtProvider {
     public String generateJwtToken(UserDetails userPrincipal) {
         Date createdDate = clock.now();
         Date expirationDate = new Date(createdDate.getTime() + jwtExpiration);
+
+        if(StringUtil.isBlank(userPrincipal.getUsername())) {
+            throw new NotFoundException("username cannot be null.");
+        }
+        if(userPrincipal.isEnabled() == false){
+            throw new ValidationException("account hasn't been activated.");
+        }
+        if(expirationDate.before(createdDate)){
+            throw new BeforeStartException("expiration date is before created date.");
+        }
+        if(StringUtil.isBlank(jwtSecret)){
+            throw new ValidationException("Empty secret exception.");
+        }
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(createdDate)
@@ -41,6 +57,9 @@ public class JwtProvider {
     }
 
     public String getUserNameFromJwtToken(String token) {
+        if(StringUtil.isBlank(token)){
+            throw new ValidationException("Empty token exception.");
+        }
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)

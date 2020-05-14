@@ -74,6 +74,13 @@ public class UserServiceImplTest {
     @MockBean
     UserRepository userRepository;
 
+
+    @Test(expected = NotFoundException.class)
+    public void UserNotFound() {
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        userService.getUserInfo(1L);
+    }
+
     @Test
     public void getUserInfo()  {
         User user = new User();
@@ -90,7 +97,15 @@ public class UserServiceImplTest {
         assertThat(found.getEmail()).isEqualTo("cdjddzy@foxmail.com");
     }
 
+    @Test(expected = NotFoundException.class)
+    public void RoleNotFound() throws IOException {
+        Mockito.when(roleRepository.findByRole(RoleType.ROLE_USER)).thenReturn(Optional.empty());
 
+        File emptyFile = new File("src/test/resources/UserData.xlsx");
+        MockMultipartFile multipartFile = new MockMultipartFile("excel", "UserData.xlsx","plain/text", new FileInputStream(emptyFile.getPath()));
+
+        userService.bulkImportUser(multipartFile);
+    }
 
     @Test(expected = EmptyFileException.class)
     public void bulkImportUserEmptyFile() throws IOException {

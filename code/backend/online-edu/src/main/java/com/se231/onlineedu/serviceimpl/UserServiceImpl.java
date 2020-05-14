@@ -95,14 +95,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String bulkImportUser(MultipartFile excel) throws IOException {
-        FileCheckUtil.checkExcelValid(excel);
+    public String bulkImportUser(MultipartFile multipartFile) throws IOException {
+        Workbook workbook;
+        //获取文件名字
+        String fileName = multipartFile.getOriginalFilename();
+        //判断后缀
+        if (fileName.endsWith("xls")) {
+            workbook = new HSSFWorkbook(multipartFile.getInputStream());
+        } else if (fileName.endsWith("xlsx")) {
+            workbook = new XSSFWorkbook(multipartFile.getInputStream());
+        } else {
+            throw new FileFormatNotSupportException("Import File Fail -> File Format Wrong,Only Support Xlsx And Xls");
+        }
+        //获取工作sheet
+        Sheet sheet = workbook.getSheet("sheet1");
+        int rows = sheet.getLastRowNum();
+        if (rows == 0) {
+            throw new EmptyFileException("File Error -> File Is Empty.");
+        }
 
-        List<Role> roles=new ArrayList<>();
         Role userRole = roleRepository.findByRole(RoleType.ROLE_USER).orElseThrow(()->new NotFoundException("该角色不存在"));
+        List<Role> roles=new ArrayList<>();
         roles.add(userRole);
 
-        InputStream file = excel.getInputStream();
+        InputStream file = multipartFile.getInputStream();
         List<Object> data = EasyExcelFactory
                 .read(file, new com.alibaba.excel.metadata.Sheet(1,1, UserExcel.class));
         int rowNumber=1;
